@@ -1,0 +1,5 @@
+venv
+output/*.xls
+output/*.xlsx
+output/*.csv
+storage*
