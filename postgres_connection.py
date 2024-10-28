@@ -51,9 +51,32 @@ def get_postgress_data(query, db=psql_conn_config.get("DATABASE")):
     # Close the connection
     conn.close()
 
+    # engine = create_psql_engine(db=db)
+
+    # pd.read_sql_query(query, engine)
+
     return df
 
 def write_to_postgress_table(df, table_name, engine, if_exists='replace', index_=False):
 
     df.to_sql(table_name, engine, if_exists=if_exists, index=index_)
+
+
+# # Create a cursor object
+# connection = create_psql_connection()
+
+# cursor = connection.cursor()
+
+# # Execute a SQL query
+# cursor.execute(sql_files['get_docs_per_country'].replace("%country_name%", COUNTRY_NAME))
+
+# # Fetch all rows from the executed query
+# records = cursor.fetchall()
+
+# column_names = [desc[0] for desc in cursor.description]
+
+# cursor.close()
+# connection.close()
+
+# pd.DataFrame(records, columns=column_names)
     
