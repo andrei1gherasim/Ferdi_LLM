@@ -3,11 +3,15 @@ import pandas as pd
 
 from sqlalchemy import create_engine
 
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import sessionmaker, declarative_base
+
 psql_conn_config ={
     "HOSTNAME": "cs.assist-ai.ro",
     "DATABASE": "paperless",
     "USERNAME": "paperless",
     "PASSWORD": "paperless",
+    "PORT": 5432,
 }
 
 def create_psql_connection(psql_conn_config=psql_conn_config, db=psql_conn_config.get("DATABASE")):
@@ -26,8 +30,9 @@ def create_psql_engine(psql_conn_config=psql_conn_config, db=psql_conn_config.ge
     database = db
     user = psql_conn_config.get("USERNAME")
     password = psql_conn_config.get("PASSWORD")
+    port = psql_conn_config.get("PORT")
 
-    engine = create_engine(f'postgresql+psycopg2://{user}:{password}@{host}:port/{database}')
+    engine = create_engine(f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}')
 
     return engine
 
@@ -61,22 +66,46 @@ def write_to_postgress_table(df, table_name, engine, if_exists='replace', index_
 
     df.to_sql(table_name, engine, if_exists=if_exists, index=index_)
 
+# ######################################################################################
 
-# # Create a cursor object
-# connection = create_psql_connection()
+engine = create_psql_engine(db="Ferdi")
 
-# cursor = connection.cursor()
+# Create a configured "Session" class
+Session = sessionmaker(bind=engine)
 
-# # Execute a SQL query
-# cursor.execute(sql_files['get_docs_per_country'].replace("%country_name%", COUNTRY_NAME))
+from data_models import Textes
 
-# # Fetch all rows from the executed query
-# records = cursor.fetchall()
+def bulk_update_textes(
+        textes_to_update, 
+        column_name, 
+        COUNTRY_NAME):
+    """    
+    :param employees_to_update: list of tuples (employee_id, new_annee_code_debut)
+    :param column_name: valid column name from the textes table
+    """
+    # Create a Session
+    session = Session()
 
-# column_names = [desc[0] for desc in cursor.description]
+    for texte_code, new_col_value in textes_to_update:
+        try:
+            # Query the employee
+            text_title = session.query(Textes).filter_by(TexteCode=texte_code, PaysCode=COUNTRY_NAME.split(" ")[0]).one_or_none()
+            if text_title:
+                # text_title.AnneeCodeDebut = new_code
+                setattr(text_title, column_name, f"{new_col_value}")
+                session.commit()
+                msg_ = f"{texte_code} column {column_name} updated to {new_col_value}."
+                print(msg_)
+                # logging.info(f"{texte_code} column {column_name} updated to {new_col_value}.")
+            else:
+                msg_ = f"{texte_code} not found."
+                print(msg_)
+                # logging.warning(f"{texte_code} not found.")
+        except Exception as e:
+            session.rollback()
+            msg_ = f"Error updating {texte_code}: {e}"
+            print(msg_)
+            # logging.error(f"Error updating {texte_code}: {e}")
 
-# cursor.close()
-# connection.close()
-
-# pd.DataFrame(records, columns=column_names)
-    
+    # Close the session
+    session.close()
