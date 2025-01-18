@@ -1,36 +1,40 @@
-# Up to 20240921:
- textes_fiscaux_exacts.ipynb
- textes_legaux_exacts.ipynb
+# **FERDI LEGAL DATA PROCESSING using LLM**
+ - before running the notebooks:
+    -   acquire the texts from the legal files using this repo:
 
-# Start local Ollama service with llama3.1
+         https://github.com/Dalitics/Ferdi.git
+    -   create and populate all the databases using this repo:
 
-### with GPU
-```sh
-docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-```
+        [paperless repo to be added]
+## How to run the notebooks
+ - use the notebooks provided in the:
+    - *01_Textes_Table* folder
+    - *02_Base_Fiscale* folder
+ - prerequisites:
+    - UBUNTU 22.04 machine/vm/WSL2
+    - python 3.12.8
+    - pip3
+    - jupyter engine: Jupyter Notebooks or Jupyter Lab or a IDE with a Jupyter
+      externsion (i.e. VSCode with Jupter extension)
+ - install the requirements:
+    - ```bash
+      pip3 install -r requirements
+ - configure the OPEN AI API key:
+    - generate the API key
+    - run:
+      ```bash 
+      export OPENAI_API_KEY=[paste here the key]
+ - configure the VOYAGE AI API key:
+    - generate the API key
+    - run:
+      ```bash 
+      export VOYAGE_API_KEY=[paste here the key]
+## What does the notebook/repo do
+This repo is intended to help extract relevant data from the extracted legal texts.
+It will first create a vectorized database and then use an LLM to generate extract
+relevant information from the vector db, using prompts.
 
-### without GPU 
-```sh
-docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-```
-
-### enter the container
-```sh
-docker exec -it ollama bash
-```
-
-### and run the command below
-```sh
-ollama run llama3.1
-```
-
-# To run the notebooks
-### first install the conda env
-```sh
-conda env create -f ferdi_env.yml
-```
- - the <strong>ferdi_env.yml</strong> file is located in the repo root directory
-### or, install the modules mentioned in the notebooks
+To do this for a specific country, enter a valid name in the .env file (i.e. COUNTRY_NAME = 'MLI Mali'). The valid country names and codes can be found in the general_config.py file
 
 # Adding new sql files
  - use the <strong>sql_files</strong> directory

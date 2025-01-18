@@ -30,8 +30,8 @@ from llama_index.core.vector_stores import (
 )
 
 
-VOYAGE_API_KEY = ""
-OPENAI_API_KEY = ""
+VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY", "")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 EMBEDDING_MODEL_SETTINGS = {
     "VOYAGE_AI": {

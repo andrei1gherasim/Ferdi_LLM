@@ -1,1 +1,2 @@
 location of sql scripts
+to run insert_textes_from_paperless_to_ferdi successfully, first set the dblink

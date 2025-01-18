@@ -1,7 +1,6 @@
 venv
-output/*.xls
-output/*.xlsx
-output/*.csv
+output/*
+!output/readme
 storage*
 saved_storage/**
 misc_notebooks/chroma*
